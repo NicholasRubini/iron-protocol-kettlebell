@@ -6225,7 +6225,7 @@
                             <div class="workout-block-header">
                                 <h3>
                                     <span class="phase-tag">${isDeload ? 'DELOAD' : t('program.day') + ' ' + session.day}</span>
-                                    ${translations[currentLanguage].sessions[session.name] || session.name}
+                                    ${translations[state.currentLang].sessions[session.name] || session.name}
                                     ${!isDeload ? intensityBadge : ''}
                                     ${!isDeload ? rpeBadge : ''}
                                 </h3>
