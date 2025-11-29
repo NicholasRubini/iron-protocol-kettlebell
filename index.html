@@ -817,10 +817,10 @@
         }
 
         .exercise-item {
-            display: grid;
-            grid-template-columns: 40px 1fr auto;
-            gap: 15px;
-            align-items: start;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: stretch;
             padding: 15px;
             background: var(--bg-secondary);
             margin-bottom: 10px;
@@ -834,11 +834,32 @@
             background: rgba(74,93,35,0.1);
         }
 
+        .exercise-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .exercise-id {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            flex: 1;
+            min-width: 0;
+        }
+
         .exercise-number {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             color: var(--text-muted);
             text-align: center;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--steel);
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
         }
 
         .exercise-details h4 {
@@ -853,18 +874,34 @@
         .exercise-details p {
             font-size: 0.85rem;
             color: var(--text-muted);
-            margin-top: 5px;
+            margin-top: 4px;
+        }
+
+        .exercise-meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 6px;
         }
 
         .exercise-details .method-tag {
             display: inline-block;
-            margin-top: 8px;
             padding: 4px 10px;
             font-size: 0.7rem;
             font-family: 'Oswald', sans-serif;
             font-weight: 600;
             letter-spacing: 1px;
             text-transform: uppercase;
+        }
+
+        .pattern-chip {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--steel);
+            padding: 4px 10px;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
         }
 
         .method-tag.ladder {
@@ -882,40 +919,84 @@
             color: var(--text-primary);
         }
 
-        .exercise-prescription {
-            text-align: right;
+        .prescription-chip {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--steel);
             min-width: 140px;
         }
 
-        .exercise-prescription .sets-reps {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.3rem;
-            color: var(--text-primary);
+        .exercise-prescription {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 8px;
+            text-align: left;
+            width: 100%;
         }
 
-        .exercise-prescription .rep-range-note {
-            font-size: 0.7rem;
+        .prescription-line {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 8px 10px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--steel);
+            align-items: flex-start;
+            word-break: break-word;
+        }
+
+        .prescription-line.wide {
+            grid-column: 1 / -1;
+        }
+
+        .prescription-line .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .prescription-line .value {
+            font-family: 'Bebas Neue', sans-serif;
+            color: var(--text-primary);
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .exercise-prescription .sets-reps,
+        .prescription-chip .sets-reps {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            letter-spacing: 1px;
+        }
+
+        .prescription-chip .tempo-chip {
+            font-size: 0.75rem;
             color: var(--accent-gold);
-            margin-top: 2px;
+        }
+
+        .exercise-prescription .rep-range-note,
+        .exercise-prescription .rest,
+        .exercise-prescription .tempo,
+        .exercise-prescription .method-detail {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
         }
 
         .exercise-prescription .rest {
-            font-size: 0.75rem;
             color: var(--olive-light);
-            margin-top: 4px;
         }
 
-        .exercise-prescription .tempo {
-            font-size: 0.7rem;
-            color: var(--accent-gold);
-            margin-top: 2px;
-        }
-
-        .exercise-prescription .method-detail {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-top: 4px;
-            font-style: italic;
+        .user-note-bubble {
+            padding: 10px 12px;
+            background: rgba(196,160,53,0.08);
+            border: 1px solid var(--accent-gold);
+            color: var(--text-primary);
+            font-size: 0.85rem;
         }
 
         .program-summary {
@@ -2369,115 +2450,28 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            /* Stack exercise details for better readability on mobile */
+            /* Stack exercise details tightly for mobile */
             .exercise-item {
-                grid-template-columns: auto 1fr;
-                grid-template-areas:
-                    "number details"
-                    "prescription prescription";
-                gap: 12px;
+                padding: 12px;
             }
 
-            .exercise-number { grid-area: number; }
-            .exercise-details { grid-area: details; }
+            .exercise-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .exercise-id {
+                width: 100%;
+            }
+
+            .prescription-chip {
+                width: 100%;
+                align-items: flex-start;
+                min-width: 0;
+            }
+
             .exercise-prescription {
-                grid-area: prescription;
-                text-align: left;
-                min-width: auto;
-                width: 100%;
-                padding: 12px 14px;
-                background: rgba(255,255,255,0.03);
-                border: 1px solid var(--steel);
-                border-radius: 8px;
-            }
-
-            .exercise-prescription .sets-reps {
-                font-size: 1.1rem;
-            }
-
-            .exercise-prescription .rest,
-            .exercise-prescription .rep-range-note,
-            .exercise-prescription .tempo {
-                display: inline-flex;
-                flex-wrap: wrap;
-                gap: 4px;
-                align-items: center;
-            }
-
-            /* Program output mobile layout */
-            .program-output {
-                overflow-x: hidden;
-            }
-
-            .week-tabs {
-                gap: 6px;
-                overflow-x: auto;
-                padding-bottom: 6px;
-            }
-
-            .week-tab {
-                padding: 10px 12px;
-                font-size: 0.8rem;
-            }
-
-            .week-header {
-                padding: 12px 14px;
-            }
-
-            .week-header .week-title {
-                font-size: 1.1rem;
-            }
-
-            .workout-block-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 6px;
-            }
-
-            .duration-badge {
-                align-self: flex-start;
-            }
-
-            .exercise-list-output {
-                padding: 14px;
-            }
-
-            .exercise-item {
                 grid-template-columns: 1fr;
-                gap: 8px;
-                align-items: center;
-            }
-
-            .exercise-number {
-                text-align: left;
-                line-height: 1;
-            }
-
-            .exercise-name-row {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 6px;
-            }
-
-            .method-tags {
-                width: 100%;
-                justify-content: flex-start;
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-
-            .method-tag {
-                font-size: 0.7rem;
-            }
-
-            .sets-reps,
-            .rest,
-            .rep-range-note,
-            .tempo,
-            .density,
-            .user-note,
-            .load-guidance {
-                font-size: 0.85rem;
             }
 
             /* Compact goal grid - 2 columns */
@@ -2844,28 +2838,43 @@
             margin-bottom: 10px;
         }
 
+        body.pdf-export .weeks-container {
+            gap: 10px;
+        }
+
         body.pdf-export .exercise-item {
-            grid-template-columns: auto 1fr;
-            grid-template-areas:
-                "number details"
-                "prescription prescription";
-            gap: 12px;
-        }
-
-        body.pdf-export .exercise-number { grid-area: number; }
-        body.pdf-export .exercise-details { grid-area: details; }
-        body.pdf-export .exercise-prescription {
-            grid-area: prescription;
-            text-align: left;
-            min-width: auto;
-            width: 100%;
             padding: 10px 12px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--steel);
-            border-radius: 8px;
+            gap: 8px;
         }
 
-        body.pdf-export .exercise-prescription .sets-reps {
+        body.pdf-export .exercise-top {
+            flex-wrap: nowrap;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        body.pdf-export .exercise-number {
+            width: 32px;
+            height: 32px;
+            font-size: 1.2rem;
+        }
+
+        body.pdf-export .prescription-chip {
+            padding: 6px 10px;
+            min-width: 120px;
+        }
+
+        body.pdf-export .exercise-prescription {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 6px;
+        }
+
+        body.pdf-export .prescription-line {
+            padding: 6px 8px;
+        }
+
+        body.pdf-export .exercise-prescription .sets-reps,
+        body.pdf-export .prescription-chip .sets-reps {
             font-size: 1.05rem;
         }
 
@@ -5455,7 +5464,8 @@
             document.body.classList.add('pdf-export');
 
             try {
-                pdfRoot = container.cloneNode(true);
+                // Build a dedicated, minimal capture tree to keep the PDF short
+                pdfRoot = document.createElement('div');
                 pdfRoot.id = 'programPdfCapture';
                 pdfRoot.classList.add('pdf-capture');
                 pdfRoot.style.position = 'absolute';
@@ -5463,35 +5473,65 @@
                 pdfRoot.style.top = '0';
                 pdfRoot.style.width = `${Math.min(container.offsetWidth, 1100)}px`;
 
-                pdfRoot.querySelectorAll('.week-content').forEach(section => section.classList.add('active'));
-                pdfRoot.querySelectorAll('.week-tabs').forEach(tabs => tabs.remove());
-                pdfRoot.querySelectorAll('.action-buttons').forEach(actions => actions.remove());
+                // Clone and append only the essentials
+                const summary = container.querySelector('.program-summary');
+                const progression = container.querySelector('.progression-overview');
+                const method = container.querySelector('.method-explanation');
+                const notes = container.querySelector('.program-notes');
+                const autoReg = container.querySelector('.autoregulation-notes');
+
+                if (summary) pdfRoot.appendChild(summary.cloneNode(true));
+                if (progression) pdfRoot.appendChild(progression.cloneNode(true));
+                if (method) pdfRoot.appendChild(method.cloneNode(true));
+
+                const weeksWrapper = document.createElement('div');
+                weeksWrapper.className = 'weeks-container';
+
+                container.querySelectorAll('.week-content').forEach(section => {
+                    const clone = section.cloneNode(true);
+                    clone.classList.add('active');
+                    weeksWrapper.appendChild(clone);
+                });
+
+                pdfRoot.appendChild(weeksWrapper);
+
+                if (notes) pdfRoot.appendChild(notes.cloneNode(true));
+                if (autoReg) pdfRoot.appendChild(autoReg.cloneNode(true));
 
                 document.body.appendChild(pdfRoot);
 
-                const canvas = await window.html2canvas(pdfRoot, {
-                    scale: 2,
-                    useCORS: true
-                });
-
-                const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF('p', 'pt', 'a4');
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
-                const imgWidth = pageWidth;
-                const imgHeight = canvas.height * (imgWidth / canvas.width);
+                const margin = 20;
 
-                let heightLeft = imgHeight;
-                let position = 0;
+                // Capture each logical section separately to limit page count
+                const sections = pdfRoot.querySelectorAll('.program-summary, .progression-overview, .method-explanation, .weeks-container > .week-content, .program-notes, .autoregulation-notes');
 
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
+                for (let i = 0; i < sections.length; i++) {
+                    const node = sections[i];
+                    const canvas = await window.html2canvas(node, {
+                        scale: 2,
+                        useCORS: true
+                    });
 
-                while (heightLeft > 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
+                    const imgData = canvas.toDataURL('image/png');
+                    const ratio = Math.min(
+                        (pageWidth - margin * 2) / canvas.width,
+                        (pageHeight - margin * 2) / canvas.height,
+                        1
+                    );
+
+                    const renderWidth = canvas.width * ratio;
+                    const renderHeight = canvas.height * ratio;
+                    const x = (pageWidth - renderWidth) / 2;
+                    const y = margin;
+
+                    if (i > 0) {
+                        pdf.addPage();
+                    }
+
+                    pdf.addImage(imgData, 'PNG', x, y, renderWidth, renderHeight);
                 }
 
                 pdf.save('iron-protocol.pdf');
@@ -5501,32 +5541,6 @@
                 }
                 document.body.classList.remove('pdf-export');
             }
-            const canvas = await window.html2canvas(container, {
-                scale: 2,
-                useCORS: true
-            });
-
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'pt', 'a4');
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-            const imgWidth = pageWidth;
-            const imgHeight = canvas.height * (imgWidth / canvas.width);
-
-            let heightLeft = imgHeight;
-            let position = 0;
-
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-
-            while (heightLeft > 0) {
-                position = heightLeft - imgHeight;
-                pdf.addPage();
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-            }
-
-            pdf.save('iron-protocol.pdf');
         }
 
         function updateExerciseAvailability() {
@@ -6708,44 +6722,41 @@
                 }
             }
             
-            let prescriptionHtml = '';
+            let prescriptionLines = [];
+            let primaryDisplay = '';
+            let tempoChip = '';
             let methodTagHtml = '';
             const deloadClass = displayEx.isDeload ? 'deload-exercise' : '';
             const priorityClass = displayEx.isPrimary ? 'primary-lift' : 'secondary-lift';
             const editedClass = edit ? 'edited' : '';
             const propagatedClass = state.propagatedEdits.has(editKey) ? 'propagated' : '';
-            
-            // Add user note if present
-            const userNoteHtml = displayEx.userNote ? 
-                `<div class="user-note">📝 ${displayEx.userNote}</div>` : '';
+
+            const patternChip = `<span class="pattern-chip">${displayEx.pattern.toUpperCase()} ${t('program.pattern')}</span>`;
+            const userNoteBubble = displayEx.userNote ? `<div class="user-note-bubble">📝 ${displayEx.userNote}</div>` : '';
 
             if (displayEx.method === 'ladder') {
                 methodTagHtml = `<span class="method-tag ladder">${t('methods.ladder')}</span>`;
-                const loadGuidanceHtml = displayEx.loadGuidance ? 
-                    `<div class="load-guidance">${displayEx.loadGuidance}</div>` : '';
-                prescriptionHtml = `
-                    <div class="sets-reps">${displayEx.numLadders} × (${displayEx.ladderRungs})</div>
-                    <div class="rep-range-note">${t('program.total')}: ~${displayEx.totalReps} ${t('program.reps')}</div>
-                    <div class="rest">${t('program.rungs')}: ${displayEx.rungRest} | ${t('program.ladders')}: ${displayEx.ladderRest}</div>
-                    ${loadGuidanceHtml}
-                    ${userNoteHtml}
-                `;
+                primaryDisplay = `${displayEx.numLadders} × (${displayEx.ladderRungs})`;
+                prescriptionLines.push(`<div class="prescription-line"><span class="label">${t('program.total')}</span><span class="value">~${displayEx.totalReps} ${t('program.reps')}</span></div>`);
+                prescriptionLines.push(`<div class="prescription-line"><span class="label">${t('program.rungs')}</span><span class="value">${displayEx.rungRest}</span></div>`);
+                prescriptionLines.push(`<div class="prescription-line"><span class="label">${t('program.ladders')}</span><span class="value">${displayEx.ladderRest}</span></div>`);
+                if (displayEx.loadGuidance) {
+                    prescriptionLines.push(`<div class="prescription-line wide"><span class="label">LOAD</span><span class="value">${displayEx.loadGuidance}</span></div>`);
+                }
             } else if (displayEx.method === 'cluster') {
                 methodTagHtml = `<span class="method-tag cluster">${t('methods.cluster')}</span>`;
-                prescriptionHtml = `
-                    <div class="sets-reps">${displayEx.numClusters} × (${displayEx.clusterBreakdown})</div>
-                    <div class="rep-range-note">${displayEx.totalRepsPerCluster} ${t('program.reps')}/cluster</div>
-                    <div class="rest">${t('program.intra')}: ${displayEx.intraRest} | ${t('program.inter')}: ${displayEx.interRest}</div>
-                    ${userNoteHtml}
-                `;
+                primaryDisplay = `${displayEx.numClusters} × (${displayEx.clusterBreakdown})`;
+                prescriptionLines.push(`<div class="prescription-line"><span class="label">${t('program.total')}</span><span class="value">${displayEx.totalRepsPerCluster} ${t('program.reps')}/${t('methods.cluster')}</span></div>`);
+                prescriptionLines.push(`<div class="prescription-line"><span class="label">${t('program.intra')}</span><span class="value">${displayEx.intraRest}</span></div>`);
+                prescriptionLines.push(`<div class="prescription-line"><span class="label">${t('program.inter')}</span><span class="value">${displayEx.interRest}</span></div>`);
             } else {
                 methodTagHtml = `<span class="method-tag straight">${t('methods.straight')}</span>`;
-                prescriptionHtml = `
-                    <div class="sets-reps">${displayEx.sets} × ${displayEx.repRange}</div>
-                    <div class="rest">${t('program.rest')}: ${displayEx.rest}</div>
-                    ${displayEx.tempo ? `<div class="tempo">${t('program.tempo')}: ${displayEx.tempo}</div>` : ''}
-                    ${userNoteHtml}
-                `;
+                primaryDisplay = `${displayEx.sets} × ${displayEx.repRange}`;
+                prescriptionLines.push(`<div class="prescription-line"><span class="label">${t('program.rest')}</span><span class="value">${displayEx.rest}</span></div>`);
+            }
+
+            if (displayEx.tempo) {
+                tempoChip = `<span class="tempo-chip">${t('program.tempo')}: ${displayEx.tempo}</span>`;
             }
 
             // Create edit data attribute for click handler
@@ -6753,17 +6764,28 @@
                 `data-week="${week}" data-day="${day}" data-index="${index}" data-type="${type}"` : '';
 
             return `
-                <div class="exercise-item ${deloadClass} ${priorityClass} ${editedClass} ${propagatedClass}" 
+                <div class="exercise-item ${deloadClass} ${priorityClass} ${editedClass} ${propagatedClass}"
                      onclick="openEditModal(${week}, ${day}, ${index}, '${type}')" ${editData}>
-                    <div class="exercise-number">${number}</div>
-                    <div class="exercise-details">
-                        <h4>${displayEx.name}</h4>
-                        <p>${displayEx.pattern.toUpperCase()} ${t('program.pattern')}</p>
-                        ${methodTagHtml}
+                    <div class="exercise-top">
+                        <div class="exercise-id">
+                            <div class="exercise-number">${number}</div>
+                            <div class="exercise-details">
+                                <h4>${displayEx.name}</h4>
+                                <div class="exercise-meta-row">
+                                    ${methodTagHtml}
+                                    ${patternChip}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="prescription-chip">
+                            <div class="sets-reps">${primaryDisplay}</div>
+                            ${tempoChip}
+                        </div>
                     </div>
                     <div class="exercise-prescription">
-                        ${prescriptionHtml}
+                        ${prescriptionLines.join('')}
                     </div>
+                    ${userNoteBubble}
                 </div>
             `;
         }
