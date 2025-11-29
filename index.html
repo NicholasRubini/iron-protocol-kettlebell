@@ -5261,7 +5261,6 @@
 
         async function downloadProgramAsPdf(container) {
             if (!container || !container.innerHTML.trim()) {
-                window.print();
                 return;
             }
 
@@ -5272,22 +5271,32 @@
                 return;
             }
 
-            const pdf = new jsPDF('p', 'pt', 'a4');
-
-            await new Promise((resolve) => {
-                pdf.html(container, {
-                    margin: [20, 20, 20, 20],
-                    autoPaging: 'text',
-                    html2canvas: {
-                        scale: 0.8,
-                        useCORS: true
-                    },
-                    callback: (doc) => {
-                        doc.save('iron-protocol.pdf');
-                        resolve();
-                    }
-                });
+            const canvas = await window.html2canvas(container, {
+                scale: 2,
+                useCORS: true
             });
+
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'pt', 'a4');
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const imgWidth = pageWidth;
+            const imgHeight = canvas.height * (imgWidth / canvas.width);
+
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save('iron-protocol.pdf');
         }
 
         function updateExerciseAvailability() {
