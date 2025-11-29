@@ -2404,6 +2404,82 @@
                 align-items: center;
             }
 
+            /* Program output mobile layout */
+            .program-output {
+                overflow-x: hidden;
+            }
+
+            .week-tabs {
+                gap: 6px;
+                overflow-x: auto;
+                padding-bottom: 6px;
+            }
+
+            .week-tab {
+                padding: 10px 12px;
+                font-size: 0.8rem;
+            }
+
+            .week-header {
+                padding: 12px 14px;
+            }
+
+            .week-header .week-title {
+                font-size: 1.1rem;
+            }
+
+            .workout-block-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+
+            .duration-badge {
+                align-self: flex-start;
+            }
+
+            .exercise-list-output {
+                padding: 14px;
+            }
+
+            .exercise-item {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                align-items: center;
+            }
+
+            .exercise-number {
+                text-align: left;
+                line-height: 1;
+            }
+
+            .exercise-name-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+
+            .method-tags {
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .method-tag {
+                font-size: 0.7rem;
+            }
+
+            .sets-reps,
+            .rest,
+            .rep-range-note,
+            .tempo,
+            .density,
+            .user-note,
+            .load-guidance {
+                font-size: 0.85rem;
+            }
+
             /* Compact goal grid - 2 columns */
             .goal-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -5425,6 +5501,32 @@
                 }
                 document.body.classList.remove('pdf-export');
             }
+            const canvas = await window.html2canvas(container, {
+                scale: 2,
+                useCORS: true
+            });
+
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'pt', 'a4');
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const imgWidth = pageWidth;
+            const imgHeight = canvas.height * (imgWidth / canvas.width);
+
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                position = heightLeft - imgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save('iron-protocol.pdf');
         }
 
         function updateExerciseAvailability() {
