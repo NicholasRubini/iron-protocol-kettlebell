@@ -2369,6 +2369,41 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
+            /* Stack exercise details for better readability on mobile */
+            .exercise-item {
+                grid-template-columns: auto 1fr;
+                grid-template-areas:
+                    "number details"
+                    "prescription prescription";
+                gap: 12px;
+            }
+
+            .exercise-number { grid-area: number; }
+            .exercise-details { grid-area: details; }
+            .exercise-prescription {
+                grid-area: prescription;
+                text-align: left;
+                min-width: auto;
+                width: 100%;
+                padding: 12px 14px;
+                background: rgba(255,255,255,0.03);
+                border: 1px solid var(--steel);
+                border-radius: 8px;
+            }
+
+            .exercise-prescription .sets-reps {
+                font-size: 1.1rem;
+            }
+
+            .exercise-prescription .rest,
+            .exercise-prescription .rep-range-note,
+            .exercise-prescription .tempo {
+                display: inline-flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                align-items: center;
+            }
+
             /* Program output mobile layout */
             .program-output {
                 overflow-x: hidden;
@@ -2759,10 +2794,79 @@
             .exercise-list-select {
                 grid-template-columns: repeat(4, 1fr);
             }
-            
+
             .main-content {
                 max-width: 1900px;
             }
+        }
+
+        /* PDF export condensation */
+        body.pdf-export {
+            background: var(--bg-primary);
+        }
+
+        body.pdf-export .pdf-capture {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        body.pdf-export .program-summary {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        body.pdf-export .progression-overview {
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        body.pdf-export .week-tabs {
+            display: none;
+        }
+
+        body.pdf-export .weeks-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px;
+        }
+
+        body.pdf-export .week-content {
+            display: block !important;
+        }
+
+        body.pdf-export .week-header {
+            margin-bottom: 10px;
+            padding: 10px 12px;
+        }
+
+        body.pdf-export .workout-block {
+            margin-bottom: 10px;
+        }
+
+        body.pdf-export .exercise-item {
+            grid-template-columns: auto 1fr;
+            grid-template-areas:
+                "number details"
+                "prescription prescription";
+            gap: 12px;
+        }
+
+        body.pdf-export .exercise-number { grid-area: number; }
+        body.pdf-export .exercise-details { grid-area: details; }
+        body.pdf-export .exercise-prescription {
+            grid-area: prescription;
+            text-align: left;
+            min-width: auto;
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--steel);
+            border-radius: 8px;
+        }
+
+        body.pdf-export .exercise-prescription .sets-reps {
+            font-size: 1.05rem;
         }
 
         /* Print Styles - Only show training program */
@@ -5347,6 +5451,56 @@
                 return;
             }
 
+            let pdfRoot = null;
+            document.body.classList.add('pdf-export');
+
+            try {
+                pdfRoot = container.cloneNode(true);
+                pdfRoot.id = 'programPdfCapture';
+                pdfRoot.classList.add('pdf-capture');
+                pdfRoot.style.position = 'absolute';
+                pdfRoot.style.left = '-9999px';
+                pdfRoot.style.top = '0';
+                pdfRoot.style.width = `${Math.min(container.offsetWidth, 1100)}px`;
+
+                pdfRoot.querySelectorAll('.week-content').forEach(section => section.classList.add('active'));
+                pdfRoot.querySelectorAll('.week-tabs').forEach(tabs => tabs.remove());
+                pdfRoot.querySelectorAll('.action-buttons').forEach(actions => actions.remove());
+
+                document.body.appendChild(pdfRoot);
+
+                const canvas = await window.html2canvas(pdfRoot, {
+                    scale: 2,
+                    useCORS: true
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'pt', 'a4');
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const imgWidth = pageWidth;
+                const imgHeight = canvas.height * (imgWidth / canvas.width);
+
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                pdf.save('iron-protocol.pdf');
+            } finally {
+                if (pdfRoot && pdfRoot.parentNode) {
+                    pdfRoot.parentNode.removeChild(pdfRoot);
+                }
+                document.body.classList.remove('pdf-export');
+            }
             const canvas = await window.html2canvas(container, {
                 scale: 2,
                 useCORS: true
