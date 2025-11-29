@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IRON PROTOCOL | Kettlebell Command</title>
     <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNa5TEd8EaN4GTjD9ylEMH9I9nsig9o03r3e7Lw+T/z+i6u40qCMgfHdCDBpNNpJBbGAbI3IuShPnsd8y5x2Eg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-bR6PvwsRWSavwgJeayW89tm3dGn/MaINmQ4AdU47gAEhK/cySqUZlFH/JhlObcSFXAuO5W91zr3HwB1C+duWGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         :root {
             --bg-primary: #0a0a0a;
@@ -2367,6 +2369,51 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
+            /* Stack exercise details for better readability on mobile */
+            .exercise-item {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "number"
+                    "details"
+                    "prescription";
+                gap: 10px;
+                align-items: stretch;
+            }
+
+            .exercise-number {
+                grid-area: number;
+                text-align: left;
+                font-size: 1.2rem;
+            }
+
+            .exercise-details {
+                grid-area: details;
+            }
+
+            .exercise-prescription {
+                grid-area: prescription;
+                text-align: left;
+                min-width: auto;
+                width: 100%;
+                padding: 12px 14px;
+                background: rgba(255,255,255,0.03);
+                border: 1px solid var(--steel);
+                border-radius: 8px;
+            }
+
+            .exercise-prescription .sets-reps {
+                font-size: 1.1rem;
+            }
+
+            .exercise-prescription .rest,
+            .exercise-prescription .rep-range-note,
+            .exercise-prescription .tempo {
+                display: inline-flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                align-items: center;
+            }
+
             /* Compact goal grid - 2 columns */
             .goal-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -2681,10 +2728,79 @@
             .exercise-list-select {
                 grid-template-columns: repeat(4, 1fr);
             }
-            
+
             .main-content {
                 max-width: 1900px;
             }
+        }
+
+        /* PDF export condensation */
+        body.pdf-export {
+            background: var(--bg-primary);
+        }
+
+        body.pdf-export .pdf-capture {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        body.pdf-export .program-summary {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        body.pdf-export .progression-overview {
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        body.pdf-export .week-tabs {
+            display: none;
+        }
+
+        body.pdf-export .weeks-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px;
+        }
+
+        body.pdf-export .week-content {
+            display: block !important;
+        }
+
+        body.pdf-export .week-header {
+            margin-bottom: 10px;
+            padding: 10px 12px;
+        }
+
+        body.pdf-export .workout-block {
+            margin-bottom: 10px;
+        }
+
+        body.pdf-export .exercise-item {
+            grid-template-columns: auto 1fr;
+            grid-template-areas:
+                "number details"
+                "prescription prescription";
+            gap: 12px;
+        }
+
+        body.pdf-export .exercise-number { grid-area: number; }
+        body.pdf-export .exercise-details { grid-area: details; }
+        body.pdf-export .exercise-prescription {
+            grid-area: prescription;
+            text-align: left;
+            min-width: auto;
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--steel);
+            border-radius: 8px;
+        }
+
+        body.pdf-export .exercise-prescription .sets-reps {
+            font-size: 1.05rem;
         }
 
         /* Print Styles - Only show training program */
@@ -4138,7 +4254,8 @@
                 toasts: {
                     presetApplied: 'Preset applicato! Puoi modificarlo prima di generare.',
                     editSaved: 'Modifica salvata!',
-                    editApplied: 'Modifica applicata a {count} esercizi!'
+                    editApplied: 'Modifica applicata a {count} esercizi!',
+                    minExercises: 'Seleziona almeno 4 esercizi per generare il programma.'
                 },
                 // Timer
                 timer: {
@@ -4381,7 +4498,8 @@
                 toasts: {
                     presetApplied: 'Preset applied! You can modify it before generating.',
                     editSaved: 'Edit saved!',
-                    editApplied: 'Edit applied to {count} exercises!'
+                    editApplied: 'Edit applied to {count} exercises!',
+                    minExercises: 'Select at least 4 exercises to generate the program.'
                 },
                 // Timer
                 timer: {
@@ -5223,6 +5341,135 @@
             }, 3000);
         }
 
+        function showMinimumSelectionToast() {
+            const toast = document.createElement('div');
+            toast.className = 'preset-toast';
+            toast.innerHTML = `
+                <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M11 15h2v2h-2zm0-8h2v6h-2zm1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                <span>${t('toasts.minExercises')}</span>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => toast.classList.add('show'), 10);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        function isMobileDevice() {
+            return /android|iphone|ipad|ipod/i.test(navigator.userAgent);
+        }
+
+        async function handlePrint() {
+            const programOutput = document.getElementById('programOutput');
+
+            if (isMobileDevice()) {
+                await downloadProgramAsPdf(programOutput);
+                return;
+            }
+
+            window.print();
+        }
+
+        async function downloadProgramAsPdf(container) {
+            if (!container || !container.innerHTML.trim()) {
+                return;
+            }
+
+            const { jsPDF } = window.jspdf || {};
+
+            if (!window.html2canvas || !jsPDF) {
+                window.print();
+                return;
+            }
+
+            let pdfRoot = null;
+            document.body.classList.add('pdf-export');
+
+            try {
+                // Build a dedicated, minimal capture tree to keep the PDF short
+                pdfRoot = document.createElement('div');
+                pdfRoot.id = 'programPdfCapture';
+                pdfRoot.classList.add('pdf-capture');
+                pdfRoot.style.position = 'absolute';
+                pdfRoot.style.left = '-9999px';
+                pdfRoot.style.top = '0';
+                pdfRoot.style.width = `${Math.min(container.offsetWidth, 1100)}px`;
+
+                // Clone and append only the essentials
+                const summary = container.querySelector('.program-summary');
+                const progression = container.querySelector('.progression-overview');
+                const method = container.querySelector('.method-explanation');
+                const notes = container.querySelector('.program-notes');
+                const autoReg = container.querySelector('.autoregulation-notes');
+
+                if (summary) pdfRoot.appendChild(summary.cloneNode(true));
+                if (progression) pdfRoot.appendChild(progression.cloneNode(true));
+                if (method) pdfRoot.appendChild(method.cloneNode(true));
+
+                const weeksWrapper = document.createElement('div');
+                weeksWrapper.className = 'weeks-container';
+
+                container.querySelectorAll('.week-content').forEach(section => {
+                    const clone = section.cloneNode(true);
+                    clone.classList.add('active');
+                    weeksWrapper.appendChild(clone);
+                });
+
+                pdfRoot.appendChild(weeksWrapper);
+
+                if (notes) pdfRoot.appendChild(notes.cloneNode(true));
+                if (autoReg) pdfRoot.appendChild(autoReg.cloneNode(true));
+
+                document.body.appendChild(pdfRoot);
+
+                const pdf = new jsPDF('p', 'pt', 'a4');
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+
+                // Capture each logical section separately to limit page count
+                const sections = pdfRoot.querySelectorAll('.program-summary, .progression-overview, .method-explanation, .weeks-container > .week-content, .program-notes, .autoregulation-notes');
+
+                for (let i = 0; i < sections.length; i++) {
+                    const node = sections[i];
+                    const canvas = await window.html2canvas(node, {
+                        scale: 2,
+                        useCORS: true
+                    });
+
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgWidth = pageWidth;
+                    const imgHeight = canvas.height * (imgWidth / canvas.width);
+
+                    let heightLeft = imgHeight;
+                    let position = 0;
+
+                    if (i > 0) {
+                        pdf.addPage();
+                    }
+
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+
+                    while (heightLeft > 0) {
+                        position = heightLeft - imgHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                        heightLeft -= pageHeight;
+                    }
+                }
+
+                pdf.save('iron-protocol.pdf');
+            } finally {
+                if (pdfRoot && pdfRoot.parentNode) {
+                    pdfRoot.parentNode.removeChild(pdfRoot);
+                }
+                document.body.classList.remove('pdf-export');
+            }
+        }
+
         function updateExerciseAvailability() {
             const isDouble = document.querySelector('input[name="equipment"]:checked').value === 'double';
             
@@ -5243,13 +5490,11 @@
         function updateSelectedCount() {
             const count = document.querySelectorAll('input[name="exercise"]:checked').length;
             selectedCountEl.textContent = count;
-            
+
             if (count < 4) {
                 selectionWarning.style.display = 'block';
-                generateBtn.disabled = true;
             } else {
                 selectionWarning.style.display = 'none';
-                generateBtn.disabled = false;
             }
         }
 
@@ -5459,8 +5704,9 @@
 
         function generateProgram() {
             const selectedExercises = getSelectedExercises();
-            
+
             if (selectedExercises.length < 4) {
+                showMinimumSelectionToast();
                 return;
             }
             
@@ -6354,7 +6600,7 @@
 
             html += `
                 <div class="action-buttons">
-                    <button class="action-btn primary" onclick="window.print()">
+                    <button class="action-btn primary" onclick="handlePrint()">
                         <svg viewBox="0 0 24 24"><path d="M18,3H6V7H18M19,12A1,1 0 0,1 18,11A1,1 0 0,1 19,10A1,1 0 0,1 20,11A1,1 0 0,1 19,12M16,19H8V14H16M19,8H5A3,3 0 0,0 2,11V17H6V21H18V17H22V11A3,3 0 0,0 19,8Z"/></svg>
                         ${t('program.print')}
                     </button>
