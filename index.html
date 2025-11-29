@@ -206,7 +206,7 @@
         .main-content {
             max-width: 1800px;
             margin: 0 auto;
-            padding: 25px 30px;
+            padding: 25px 30px 25px 280px;
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 20px;
@@ -1030,6 +1030,29 @@
             margin-top: 25px;
         }
 
+        .program-top-nav {
+            display: flex;
+            justify-content: flex-end;
+            margin: 15px 0 0;
+        }
+
+        .back-to-top-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--steel);
+            color: var(--text-primary);
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .back-to-top-btn:hover {
+            border-color: var(--olive);
+            color: var(--accent-gold);
+        }
+
         .action-btn {
             flex: 1;
             padding: 15px 25px;
@@ -1079,42 +1102,61 @@
             fill: var(--text-primary);
         }
 
-        .quick-nav {
+        .side-panel {
             position: fixed;
-            right: 20px;
-            bottom: 30px;
+            top: 140px;
+            left: 20px;
+            width: 230px;
+            background: rgba(17,17,17,0.95);
+            border: 1px solid var(--steel);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.35);
+            padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 10px;
             z-index: 1500;
         }
 
-        .quick-nav button {
-            background: rgba(26,26,26,0.9);
+        .side-panel .side-label {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .side-panel .side-link {
+            background: var(--bg-tertiary);
             border: 1px solid var(--steel);
             color: var(--text-primary);
-            padding: 10px 14px;
+            padding: 10px 12px;
             font-family: 'Oswald', sans-serif;
             letter-spacing: 1px;
             cursor: pointer;
             transition: all 0.2s ease;
             text-transform: uppercase;
-            min-width: 140px;
             display: flex;
             align-items: center;
             gap: 8px;
-            justify-content: center;
-            box-shadow: 0 8px 18px rgba(0,0,0,0.35);
+            justify-content: space-between;
         }
 
-        .quick-nav button:hover {
+        .side-panel .side-link:hover {
             border-color: var(--olive);
             color: var(--accent-gold);
         }
 
-        .quick-nav .nav-top {
-            background: var(--olive-dark);
-            border-color: var(--olive);
+        .side-panel .side-link svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .side-panel .side-generate {
+            margin-top: 4px;
+        }
+
+        .side-panel .side-generate button {
+            width: 100%;
         }
 
         .timer-overlay {
@@ -2444,8 +2486,13 @@
         @media (max-width: 1200px) {
             .main-content {
                 grid-template-columns: 1fr 1fr;
+                padding: 25px 20px;
             }
-            
+
+            .side-panel {
+                display: none;
+            }
+
             .program-panel {
                 grid-column: 1 / -1;
             }
@@ -2469,17 +2516,6 @@
             
             .header-content {
                 padding: 10px 15px;
-            }
-
-            .quick-nav {
-                right: 12px;
-                bottom: 110px;
-            }
-
-            .quick-nav button {
-                min-width: 0;
-                padding: 10px 12px;
-                font-size: 0.8rem;
             }
 
             .program-actions .generate-action {
@@ -2839,6 +2875,181 @@
             .main-content {
                 max-width: 1900px;
             }
+        }
+
+        /* PDF export condensation */
+        body.pdf-export {
+            background: var(--bg-primary);
+        }
+
+        body.pdf-export .side-panel {
+            display: none;
+        }
+
+        body.pdf-export .pdf-capture {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        body.pdf-export .program-summary {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        body.pdf-export .progression-overview {
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        body.pdf-export .week-tabs {
+            display: none;
+        }
+
+        body.pdf-export .weeks-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px;
+        }
+
+        body.pdf-export .week-content {
+            display: block !important;
+        }
+
+        body.pdf-export .week-header {
+            margin-bottom: 10px;
+            padding: 10px 12px;
+        }
+
+        body.pdf-export .workout-block {
+            margin-bottom: 10px;
+        }
+
+        body.pdf-export .weeks-container {
+            gap: 10px;
+        }
+
+        body.pdf-export .exercise-item {
+            padding: 10px 12px;
+            gap: 8px;
+        }
+
+        body.pdf-export .exercise-top {
+            flex-wrap: nowrap;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        body.pdf-export .exercise-number {
+            width: 32px;
+            height: 32px;
+            font-size: 1.2rem;
+        }
+
+        body.pdf-export .prescription-chip {
+            padding: 6px 10px;
+            min-width: 120px;
+        }
+
+        body.pdf-export .exercise-prescription {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 6px;
+        }
+
+        body.pdf-export .prescription-line {
+            padding: 6px 8px;
+        }
+
+        body.pdf-export .exercise-prescription .sets-reps,
+        body.pdf-export .prescription-chip .sets-reps {
+            font-size: 1.05rem;
+        }
+
+        body.pdf-export .compact-pdf {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        body.pdf-export .pdf-weeks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 10px;
+        }
+
+        body.pdf-export .pdf-week-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--steel);
+            padding: 10px 12px;
+        }
+
+        body.pdf-export .pdf-week-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        body.pdf-export .pdf-week-head .week-title {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        body.pdf-export .pdf-week-head .week-note {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-align: right;
+        }
+
+        body.pdf-export .pdf-session-row {
+            border-top: 1px solid var(--steel);
+            padding-top: 6px;
+            margin-top: 6px;
+        }
+
+        body.pdf-export .pdf-session-row .session-title {
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        body.pdf-export .session-meta {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        body.pdf-export .session-meta.muted {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        body.pdf-export .pdf-exercise-list {
+            display: grid;
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        body.pdf-export .pdf-exercise-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 0.85rem;
+            border: 1px solid var(--steel);
+            padding: 6px 8px;
+            background: rgba(0,0,0,0.25);
+        }
+
+        body.pdf-export .pdf-exercise-row .exercise-label {
+            font-weight: 700;
+        }
+
+        body.pdf-export .pdf-exercise-row .exercise-pres {
+            text-align: right;
+            color: var(--text-secondary);
+        }
+
+        body.pdf-export .finisher-row {
+            background: rgba(200,80,0,0.15);
         }
 
         /* PDF export condensation */
@@ -3441,13 +3652,35 @@
             </div>
         </header>
 
-        <nav class="quick-nav">
-            <button data-target="#presetSection" data-i18n="nav.presets">Preset</button>
-            <button data-target="#configPanel" data-i18n="nav.parameters">Parametri</button>
-            <button data-target="#exercisePanel" data-i18n="nav.exercises">Esercizi</button>
-            <button data-target="#programPanel" data-i18n="nav.program">Programma</button>
-            <button class="nav-top" data-target="top" data-i18n="nav.top">Torna su</button>
-        </nav>
+        <aside class="side-panel">
+            <div class="side-label" data-i18n="nav.label">Navigazione</div>
+            <button class="side-link" data-target="#presetSection">
+                <span data-i18n="nav.presets">Preset</span>
+                <svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"/></svg>
+            </button>
+            <button class="side-link" data-target="#configPanel">
+                <span data-i18n="nav.parameters">Parametri</span>
+                <svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"/></svg>
+            </button>
+            <button class="side-link" data-target="#exercisePanel">
+                <span data-i18n="nav.exercises">Esercizi</span>
+                <svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"/></svg>
+            </button>
+            <button class="side-link" data-target="#programPanel">
+                <span data-i18n="nav.program">Programma</span>
+                <svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5v10z"/></svg>
+            </button>
+            <button class="side-link" data-target="top">
+                <span data-i18n="nav.top">Torna su</span>
+                <svg viewBox="0 0 24 24"><path d="M8 15l4-4 4 4H8z"/></svg>
+            </button>
+            <div class="side-generate">
+                <button class="action-btn generate-action" id="generateBtn" data-i18n="generate">
+                    <svg viewBox="0 0 24 24"><path d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z"/></svg>
+                    GENERA PROTOCOLLO
+                </button>
+            </div>
+        </aside>
 
         <main class="main-content">
             <!-- Preset Programs Section -->
@@ -4072,6 +4305,10 @@
 
                     <div class="program-output" id="programOutput"></div>
 
+                    <div class="program-top-nav">
+                        <button class="back-to-top-btn" id="programTopBtn" data-i18n="nav.top">Torna su</button>
+                    </div>
+
                     <div class="action-buttons program-actions">
                         <button class="action-btn primary" onclick="handlePrint()" data-i18n="program.print">
                             <svg viewBox="0 0 24 24"><path d="M18,3H6V7H18M19,12A1,1 0 0,1 18,11A1,1 0 0,1 19,10A1,1 0 0,1 20,11A1,1 0 0,1 19,12M16,19H8V14H16M19,8H5A3,3 0 0,0 2,11V17H6V21H18V17H22V11A3,3 0 0,0 19,8Z"/></svg>
@@ -4080,10 +4317,6 @@
                         <button class="action-btn" onclick="exportProgramSpreadsheet()" data-i18n="program.exportSpreadsheet">
                             <svg viewBox="0 0 24 24"><path d="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M10,17H7V14H10M10,13H7V10H10M10,9H7V6H10M17,17H11V14H17M17,13H11V10H17M17,9H11V6H17"/></svg>
                             EXPORT CSV
-                        </button>
-                        <button class="action-btn generate-action" id="generateBtn" onclick="generateProgram()" data-i18n="generate">
-                            <svg viewBox="0 0 24 24"><path d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z"/></svg>
-                            GENERA PROTOCOLLO
                         </button>
                     </div>
                 </div>
@@ -4284,6 +4517,7 @@
                     evidenceBased: 'Basato su Evidenze'
                 },
                 nav: {
+                    label: 'Navigazione rapida',
                     presets: 'Preset',
                     parameters: 'Parametri',
                     exercises: 'Esercizi',
@@ -4539,6 +4773,7 @@
                     evidenceBased: 'Evidence-Based'
                 },
                 nav: {
+                    label: 'Quick Nav',
                     presets: 'Presets',
                     parameters: 'Parameters',
                     exercises: 'Exercises',
@@ -5476,21 +5711,27 @@
             }
         });
 
-        const quickNavButtons = document.querySelectorAll('.quick-nav button');
-        quickNavButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const target = btn.dataset.target;
-                if (target === 'top') {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    return;
-                }
-
-                const el = document.querySelector(target);
-                if (el) {
-                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
+        const sideNavButtons = document.querySelectorAll('.side-panel .side-link');
+        sideNavButtons.forEach(btn => {
+            btn.addEventListener('click', () => handleNav(btn.dataset.target));
         });
+
+        const programTopBtn = document.getElementById('programTopBtn');
+        if (programTopBtn) {
+            programTopBtn.addEventListener('click', () => handleNav('top'));
+        }
+
+        function handleNav(target) {
+            if (target === 'top') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+
+            const el = document.querySelector(target);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
 
         // Event Listeners
         durationSlider.addEventListener('input', (e) => {
