@@ -3052,6 +3052,181 @@
             background: rgba(200,80,0,0.15);
         }
 
+        /* PDF export condensation */
+        body.pdf-export {
+            background: var(--bg-primary);
+        }
+
+        body.pdf-export .quick-nav {
+            display: none;
+        }
+
+        body.pdf-export .pdf-capture {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        body.pdf-export .program-summary {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        body.pdf-export .progression-overview {
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        body.pdf-export .week-tabs {
+            display: none;
+        }
+
+        body.pdf-export .weeks-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px;
+        }
+
+        body.pdf-export .week-content {
+            display: block !important;
+        }
+
+        body.pdf-export .week-header {
+            margin-bottom: 10px;
+            padding: 10px 12px;
+        }
+
+        body.pdf-export .workout-block {
+            margin-bottom: 10px;
+        }
+
+        body.pdf-export .weeks-container {
+            gap: 10px;
+        }
+
+        body.pdf-export .exercise-item {
+            padding: 10px 12px;
+            gap: 8px;
+        }
+
+        body.pdf-export .exercise-top {
+            flex-wrap: nowrap;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        body.pdf-export .exercise-number {
+            width: 32px;
+            height: 32px;
+            font-size: 1.2rem;
+        }
+
+        body.pdf-export .prescription-chip {
+            padding: 6px 10px;
+            min-width: 120px;
+        }
+
+        body.pdf-export .exercise-prescription {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 6px;
+        }
+
+        body.pdf-export .prescription-line {
+            padding: 6px 8px;
+        }
+
+        body.pdf-export .exercise-prescription .sets-reps,
+        body.pdf-export .prescription-chip .sets-reps {
+            font-size: 1.05rem;
+        }
+
+        body.pdf-export .compact-pdf {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        body.pdf-export .pdf-weeks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 10px;
+        }
+
+        body.pdf-export .pdf-week-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--steel);
+            padding: 10px 12px;
+        }
+
+        body.pdf-export .pdf-week-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        body.pdf-export .pdf-week-head .week-title {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        body.pdf-export .pdf-week-head .week-note {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-align: right;
+        }
+
+        body.pdf-export .pdf-session-row {
+            border-top: 1px solid var(--steel);
+            padding-top: 6px;
+            margin-top: 6px;
+        }
+
+        body.pdf-export .pdf-session-row .session-title {
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        body.pdf-export .session-meta {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        body.pdf-export .session-meta.muted {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        body.pdf-export .pdf-exercise-list {
+            display: grid;
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        body.pdf-export .pdf-exercise-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 0.85rem;
+            border: 1px solid var(--steel);
+            padding: 6px 8px;
+            background: rgba(0,0,0,0.25);
+        }
+
+        body.pdf-export .pdf-exercise-row .exercise-label {
+            font-weight: 700;
+        }
+
+        body.pdf-export .pdf-exercise-row .exercise-pres {
+            text-align: right;
+            color: var(--text-secondary);
+        }
+
+        body.pdf-export .finisher-row {
+            background: rgba(200,80,0,0.15);
+        }
+
         /* Print Styles - Only show training program */
         @media print {
             * {
