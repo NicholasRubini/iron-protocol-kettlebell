@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IRON PROTOCOL | Kettlebell Command</title>
     <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNa5TEd8EaN4GTjD9ylEMH9I9nsig9o03r3e7Lw+T/z+i6u40qCMgfHdCDBpNNpJBbGAbI3IuShPnsd8y5x2Eg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-bR6PvwsRWSavwgJeayW89tm3dGn/MaINmQ4AdU47gAEhK/cySqUZlFH/JhlObcSFXAuO5W91zr3HwB1C+duWGQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         :root {
             --bg-primary: #0a0a0a;
@@ -815,10 +817,10 @@
         }
 
         .exercise-item {
-            display: grid;
-            grid-template-columns: 40px 1fr auto;
-            gap: 15px;
-            align-items: start;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: stretch;
             padding: 15px;
             background: var(--bg-secondary);
             margin-bottom: 10px;
@@ -832,88 +834,154 @@
             background: rgba(74,93,35,0.1);
         }
 
+        .exercise-header {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 12px;
+            align-items: start;
+        }
+
         .exercise-number {
+            width: 44px;
+            height: 44px;
+            border-radius: 6px;
+            background: linear-gradient(145deg, var(--olive-dark), var(--olive));
+            display: grid;
+            place-items: center;
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.5rem;
-            color: var(--text-muted);
-            text-align: center;
+            font-size: 1.3rem;
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+            flex-shrink: 0;
+        }
+
+        .exercise-core {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .exercise-name-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: space-between;
         }
 
         .exercise-details h4 {
-            font-family: 'Oswald', sans-serif;
-            font-size: 1rem;
-            font-weight: 600;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
             letter-spacing: 1px;
-            color: var(--text-primary);
-            text-transform: uppercase;
         }
 
         .exercise-details p {
             font-size: 0.85rem;
             color: var(--text-muted);
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
-        .exercise-details .method-tag {
-            display: inline-block;
-            margin-top: 8px;
-            padding: 4px 10px;
-            font-size: 0.7rem;
-            font-family: 'Oswald', sans-serif;
-            font-weight: 600;
+        .exercise-meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .pattern-chip {
+            padding: 5px 10px;
+            border: 1px dashed var(--olive);
+            background: rgba(74,93,35,0.08);
+            color: var(--olive-light);
+            font-size: 0.75rem;
             letter-spacing: 1px;
             text-transform: uppercase;
         }
 
-        .method-tag.ladder {
-            background: var(--info-blue);
-            color: var(--text-primary);
-        }
-
-        .method-tag.cluster {
-            background: var(--warning-orange);
+        .method-tag {
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
             color: var(--bg-primary);
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
-        .method-tag.straight {
-            background: var(--steel);
-            color: var(--text-primary);
+        .method-tag.ladder { background: var(--danger-red); }
+        .method-tag.cluster { background: #cc5500; }
+        .method-tag.straight { background: var(--info-blue); }
+
+        .tempo-chip {
+            padding: 4px 10px;
+            background: rgba(58,58,58,0.5);
+            border: 1px solid var(--steel);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .headline-prescription {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
         }
 
         .exercise-prescription {
-            text-align: right;
-            min-width: 140px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        .exercise-prescription .sets-reps {
+        .sets-reps {
             font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.3rem;
+            font-size: 1.25rem;
+            letter-spacing: 2px;
+            color: var(--accent-gold);
+        }
+
+        .exercise-prescription .sets-reps,
+        .prescription-chip .sets-reps {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.2rem;
             color: var(--text-primary);
+            letter-spacing: 1px;
         }
 
-        .exercise-prescription .rep-range-note {
-            font-size: 0.7rem;
-            color: var(--accent-gold);
-            margin-top: 2px;
+        .pill-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
         }
 
-        .exercise-prescription .rest {
+        .prescription-pill {
+            border: 1px solid var(--steel);
+            padding: 10px 12px;
+            background: rgba(0,0,0,0.18);
+            display: grid;
+            gap: 4px;
+        }
+
+        .prescription-pill .label {
             font-size: 0.75rem;
-            color: var(--olive-light);
-            margin-top: 4px;
-        }
-
-        .exercise-prescription .tempo {
-            font-size: 0.7rem;
-            color: var(--accent-gold);
-            margin-top: 2px;
-        }
-
-        .exercise-prescription .method-detail {
-            font-size: 0.7rem;
             color: var(--text-muted);
-            margin-top: 4px;
-            font-style: italic;
+            letter-spacing: 0.5px;
+        }
+
+        .prescription-pill .value {
+            font-family: 'Oswald', sans-serif;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+        }
+
+        .user-note-bubble {
+            padding: 10px 12px;
+            background: rgba(196,160,53,0.08);
+            border: 1px solid var(--accent-gold);
+            color: var(--text-primary);
+            font-size: 0.85rem;
         }
 
         .program-summary {
@@ -2367,6 +2435,29 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
+            /* Stack exercise details tightly for mobile */
+            .exercise-item {
+                padding: 12px;
+            }
+
+            .exercise-header {
+                grid-template-columns: 1fr;
+            }
+
+            .exercise-name-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+
+            .headline-prescription {
+                width: 100%;
+            }
+
+            .pill-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            }
+
             /* Compact goal grid - 2 columns */
             .goal-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -2681,10 +2772,181 @@
             .exercise-list-select {
                 grid-template-columns: repeat(4, 1fr);
             }
-            
+
             .main-content {
                 max-width: 1900px;
             }
+        }
+
+        /* PDF export condensation */
+        body.pdf-export {
+            background: var(--bg-primary);
+        }
+
+        body.pdf-export .pdf-capture {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        body.pdf-export .program-summary {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        body.pdf-export .progression-overview {
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        body.pdf-export .week-tabs {
+            display: none;
+        }
+
+        body.pdf-export .weeks-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px;
+        }
+
+        body.pdf-export .week-content {
+            display: block !important;
+        }
+
+        body.pdf-export .week-header {
+            margin-bottom: 10px;
+            padding: 10px 12px;
+        }
+
+        body.pdf-export .workout-block {
+            margin-bottom: 10px;
+        }
+
+        body.pdf-export .weeks-container {
+            gap: 10px;
+        }
+
+        body.pdf-export .exercise-item {
+            padding: 10px 12px;
+            gap: 8px;
+        }
+
+        body.pdf-export .exercise-top {
+            flex-wrap: nowrap;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        body.pdf-export .exercise-number {
+            width: 32px;
+            height: 32px;
+            font-size: 1.2rem;
+        }
+
+        body.pdf-export .prescription-chip {
+            padding: 6px 10px;
+            min-width: 120px;
+        }
+
+        body.pdf-export .exercise-prescription {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 6px;
+        }
+
+        body.pdf-export .prescription-line {
+            padding: 6px 8px;
+        }
+
+        body.pdf-export .exercise-prescription .sets-reps,
+        body.pdf-export .prescription-chip .sets-reps {
+            font-size: 1.05rem;
+        }
+
+        body.pdf-export .compact-pdf {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        body.pdf-export .pdf-weeks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 10px;
+        }
+
+        body.pdf-export .pdf-week-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--steel);
+            padding: 10px 12px;
+        }
+
+        body.pdf-export .pdf-week-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        body.pdf-export .pdf-week-head .week-title {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        body.pdf-export .pdf-week-head .week-note {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-align: right;
+        }
+
+        body.pdf-export .pdf-session-row {
+            border-top: 1px solid var(--steel);
+            padding-top: 6px;
+            margin-top: 6px;
+        }
+
+        body.pdf-export .pdf-session-row .session-title {
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        body.pdf-export .session-meta {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        body.pdf-export .session-meta.muted {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        body.pdf-export .pdf-exercise-list {
+            display: grid;
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        body.pdf-export .pdf-exercise-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 0.85rem;
+            border: 1px solid var(--steel);
+            padding: 6px 8px;
+            background: rgba(0,0,0,0.25);
+        }
+
+        body.pdf-export .pdf-exercise-row .exercise-label {
+            font-weight: 700;
+        }
+
+        body.pdf-export .pdf-exercise-row .exercise-pres {
+            text-align: right;
+            color: var(--text-secondary);
+        }
+
+        body.pdf-export .finisher-row {
+            background: rgba(200,80,0,0.15);
         }
 
         /* Print Styles - Only show training program */
@@ -3738,6 +4000,21 @@
                     </div>
 
                     <div class="program-output" id="programOutput"></div>
+
+                    <div class="action-buttons program-actions">
+                        <button class="action-btn primary" onclick="handlePrint()" data-i18n="program.print">
+                            <svg viewBox="0 0 24 24"><path d="M18,3H6V7H18M19,12A1,1 0 0,1 18,11A1,1 0 0,1 19,10A1,1 0 0,1 20,11A1,1 0 0,1 19,12M16,19H8V14H16M19,8H5A3,3 0 0,0 2,11V17H6V21H18V17H22V11A3,3 0 0,0 19,8Z"/></svg>
+                            STAMPA
+                        </button>
+                        <button class="action-btn" onclick="exportProgramSpreadsheet()" data-i18n="program.exportSpreadsheet">
+                            <svg viewBox="0 0 24 24"><path d="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M10,17H7V14H10M10,13H7V10H10M10,9H7V6H10M17,17H11V14H17M17,13H11V10H17M17,9H11V6H17"/></svg>
+                            EXPORT CSV
+                        </button>
+                        <button class="action-btn" onclick="generateProgram()" data-i18n="program.regenerate">
+                            <svg viewBox="0 0 24 24"><path d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z"/></svg>
+                            RIGENERA
+                        </button>
+                    </div>
                 </div>
             </div>
         </main>
@@ -4027,10 +4304,12 @@
                     guidelines: 'LINEE GUIDA ALLENAMENTO',
                     autoregulation: 'AUTOREGOLAZIONE CARICO',
                     print: 'STAMPA',
+                    exportSpreadsheet: 'ESPORTA FOGLIO',
                     regenerate: 'RIGENERA',
                     week: 'SETTIMANA',
                     day: 'GIORNO',
                     deload: 'DELOAD',
+                    main: 'MAIN',
                     accessory: 'ACCESSORI',
                     supplemental: 'Lavoro Supplementare',
                     finisher: 'FINISHER',
@@ -4138,7 +4417,10 @@
                 toasts: {
                     presetApplied: 'Preset applicato! Puoi modificarlo prima di generare.',
                     editSaved: 'Modifica salvata!',
-                    editApplied: 'Modifica applicata a {count} esercizi!'
+                    editApplied: 'Modifica applicata a {count} esercizi!',
+                    minExercises: 'Seleziona almeno 4 esercizi per generare il programma.',
+                    exportedSpreadsheet: 'Programma esportato in CSV per la modifica.',
+                    generateFirst: 'Genera un programma prima di esportare.'
                 },
                 // Timer
                 timer: {
@@ -4270,10 +4552,12 @@
                     guidelines: 'TRAINING GUIDELINES',
                     autoregulation: 'LOAD AUTOREGULATION',
                     print: 'PRINT',
+                    exportSpreadsheet: 'EXPORT SHEET',
                     regenerate: 'REGENERATE',
                     week: 'WEEK',
                     day: 'DAY',
                     deload: 'DELOAD',
+                    main: 'MAIN',
                     accessory: 'ACCESSORY',
                     supplemental: 'Supplemental Work',
                     finisher: 'FINISHER',
@@ -4381,7 +4665,10 @@
                 toasts: {
                     presetApplied: 'Preset applied! You can modify it before generating.',
                     editSaved: 'Edit saved!',
-                    editApplied: 'Edit applied to {count} exercises!'
+                    editApplied: 'Edit applied to {count} exercises!',
+                    minExercises: 'Select at least 4 exercises to generate the program.',
+                    exportedSpreadsheet: 'Program exported to CSV for editing.',
+                    generateFirst: 'Generate a program before exporting.'
                 },
                 // Timer
                 timer: {
@@ -5223,6 +5510,273 @@
             }, 3000);
         }
 
+        function showToastMessage(message) {
+            const toast = document.createElement('div');
+            toast.className = 'preset-toast';
+            toast.innerHTML = `
+                <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m1 15h-2v-2h2v2m0-4h-2V7h2v6Z"/></svg>
+                <span>${message}</span>
+            `;
+
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 2800);
+        }
+
+        function showMinimumSelectionToast() {
+            const toast = document.createElement('div');
+            toast.className = 'preset-toast';
+            toast.innerHTML = `
+                <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M11 15h2v2h-2zm0-8h2v6h-2zm1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                <span>${t('toasts.minExercises')}</span>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => toast.classList.add('show'), 10);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        function isMobileDevice() {
+            return /android|iphone|ipad|ipod/i.test(navigator.userAgent);
+        }
+
+        async function handlePrint() {
+            const programOutput = document.getElementById('programOutput');
+
+            if (isMobileDevice()) {
+                await downloadProgramAsPdf(programOutput);
+                return;
+            }
+
+            window.print();
+        }
+
+        
+        async function downloadProgramAsPdf(container) {
+            if (!container || !container.innerHTML.trim() || !state.currentProgram) {
+                return;
+            }
+
+            const { jsPDF } = window.jspdf || {};
+
+            if (!window.html2canvas || !jsPDF) {
+                window.print();
+                return;
+            }
+
+            let pdfRoot;
+
+            try {
+                document.body.classList.add('pdf-export');
+
+                pdfRoot = document.createElement('div');
+                pdfRoot.className = 'pdf-capture compact-pdf';
+
+                const summary = container.querySelector('.program-summary');
+                const progression = container.querySelector('.progression-overview');
+                const method = container.querySelector('.method-explanation');
+                const notes = container.querySelector('.program-notes');
+                const autoReg = container.querySelector('.autoregulation-notes');
+
+                if (summary) pdfRoot.appendChild(summary.cloneNode(true));
+                if (progression) pdfRoot.appendChild(progression.cloneNode(true));
+                if (method) pdfRoot.appendChild(method.cloneNode(true));
+
+                const weeksWrapper = document.createElement('div');
+                weeksWrapper.className = 'pdf-weeks-grid';
+
+                state.currentProgram.weeklyProgram.forEach(weekData => {
+                    const weekCard = document.createElement('div');
+                    weekCard.className = 'pdf-week-card';
+                    weekCard.innerHTML = `
+                        <div class="pdf-week-head ${weekData.progression.isDeload ? 'deload' : ''}">
+                            <div class="week-title">${t('program.week')} ${weekData.week}${weekData.progression.isDeload ? ' • DELOAD' : ''}</div>
+                            <div class="week-note">${weekData.progression.note}</div>
+                        </div>
+                    `;
+
+                    weekData.sessions.forEach(session => {
+                        const sessionBlock = document.createElement('div');
+                        sessionBlock.className = 'pdf-session-row';
+                        sessionBlock.innerHTML = `
+                            <div class="session-title">${t('program.day')} ${session.day} • ${translations[state.currentLang].sessions[session.name] || session.name}</div>
+                            ${session.intensityDescription ? `<div class="session-meta">${session.intensityDescription}</div>` : ''}
+                        `;
+
+                        const exerciseList = document.createElement('div');
+                        exerciseList.className = 'pdf-exercise-list';
+
+                        session.main.forEach((ex, idx) => {
+                            const { displayEx } = resolveDisplayExercise(ex, weekData.week, session.day, 'main', idx);
+                            exerciseList.appendChild(buildPdfExerciseRow(displayEx, idx + 1));
+                        });
+
+                        if (session.accessory.length > 0) {
+                            const accessoryLabel = document.createElement('div');
+                            accessoryLabel.className = 'session-meta muted';
+                            accessoryLabel.textContent = t('program.accessory');
+                            exerciseList.appendChild(accessoryLabel);
+
+                            session.accessory.forEach((ex, idx) => {
+                                const { displayEx } = resolveDisplayExercise(ex, weekData.week, session.day, 'accessory', idx);
+                                exerciseList.appendChild(buildPdfExerciseRow(displayEx, String.fromCharCode(65 + idx)));
+                            });
+                        }
+
+                        if (session.finisher && !weekData.progression.isDeload) {
+                            const finisherRow = document.createElement('div');
+                            finisherRow.className = 'pdf-exercise-row finisher-row';
+                            finisherRow.innerHTML = `
+                                <span class="exercise-label">★ ${session.finisher.name}</span>
+                                <span class="exercise-pres">${session.finisher.desc}</span>
+                            `;
+                            exerciseList.appendChild(finisherRow);
+                        }
+
+                        sessionBlock.appendChild(exerciseList);
+                        weekCard.appendChild(sessionBlock);
+                    });
+
+                    weeksWrapper.appendChild(weekCard);
+                });
+
+                pdfRoot.appendChild(weeksWrapper);
+
+                if (notes) pdfRoot.appendChild(notes.cloneNode(true));
+                if (autoReg) pdfRoot.appendChild(autoReg.cloneNode(true));
+
+                document.body.appendChild(pdfRoot);
+
+                const pdf = new jsPDF('p', 'pt', 'a4');
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const margin = 20;
+
+                const canvas = await window.html2canvas(pdfRoot, {
+                    scale: 2,
+                    useCORS: true
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = pageWidth - margin * 2;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                let heightLeft = imgHeight;
+                let position = margin;
+
+                pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight + margin;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                pdf.save('iron-protocol.pdf');
+            } finally {
+                if (pdfRoot && pdfRoot.parentNode) {
+                    pdfRoot.parentNode.removeChild(pdfRoot);
+                }
+                document.body.classList.remove('pdf-export');
+            }
+        }
+
+        function exportProgramSpreadsheet() {
+            if (!state.currentProgram) {
+                showToastMessage(t('toasts.generateFirst'));
+                return;
+            }
+
+            const rows = [[
+                'Week',
+                'Day',
+                'Session',
+                'Type',
+                'Exercise',
+                'Prescription',
+                'Notes'
+            ]];
+
+            const addExerciseRow = (week, day, sessionLabel, typeLabel, label, displayEx) => {
+                let prescription = '';
+
+                if (displayEx.method === 'ladder') {
+                    prescription = `${displayEx.numLadders}×(${displayEx.ladderRungs}) | ${displayEx.rungRest}/${displayEx.ladderRest}`;
+                } else if (displayEx.method === 'cluster') {
+                    prescription = `${displayEx.numClusters}×(${displayEx.clusterBreakdown}) | ${displayEx.intraRest}/${displayEx.interRest}`;
+                } else {
+                    prescription = `${displayEx.sets}×${displayEx.repRange} | ${displayEx.rest}`;
+                }
+
+                if (displayEx.tempo) {
+                    prescription += ` | ${t('program.tempo')} ${displayEx.tempo}`;
+                }
+
+                rows.push([
+                    week,
+                    day,
+                    sessionLabel,
+                    typeLabel,
+                    `${label}. ${displayEx.name}`,
+                    prescription,
+                    displayEx.userNote || ''
+                ]);
+            };
+
+            state.currentProgram.weeklyProgram.forEach(weekData => {
+                weekData.sessions.forEach(session => {
+                    const sessionLabel = `${t('program.day')} ${session.day}`;
+
+                    session.main.forEach((ex, idx) => {
+                        const { displayEx } = resolveDisplayExercise(ex, weekData.week, session.day, 'main', idx);
+                        addExerciseRow(weekData.week, session.day, sessionLabel, t('program.main'), idx + 1, displayEx);
+                    });
+
+                    session.accessory.forEach((ex, idx) => {
+                        const { displayEx } = resolveDisplayExercise(ex, weekData.week, session.day, 'accessory', idx);
+                        addExerciseRow(weekData.week, session.day, sessionLabel, t('program.accessory'), String.fromCharCode(65 + idx), displayEx);
+                    });
+
+                    if (session.finisher && !weekData.progression.isDeload) {
+                        rows.push([
+                            weekData.week,
+                            session.day,
+                            sessionLabel,
+                            t('program.finisher'),
+                            `★ ${session.finisher.name}`,
+                            session.finisher.desc,
+                            ''
+                        ]);
+                    }
+                });
+            });
+
+            const csvContent = rows
+                .map(row => row.map(value => `"${String(value ?? '').replace(/"/g, '""')}"`).join(','))
+                .join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'iron-protocol-program.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showToastMessage(t('toasts.exportedSpreadsheet'));
+        }
+
         function updateExerciseAvailability() {
             const isDouble = document.querySelector('input[name="equipment"]:checked').value === 'double';
             
@@ -5243,13 +5797,11 @@
         function updateSelectedCount() {
             const count = document.querySelectorAll('input[name="exercise"]:checked').length;
             selectedCountEl.textContent = count;
-            
+
             if (count < 4) {
                 selectionWarning.style.display = 'block';
-                generateBtn.disabled = true;
             } else {
                 selectionWarning.style.display = 'none';
-                generateBtn.disabled = false;
             }
         }
 
@@ -5459,8 +6011,9 @@
 
         function generateProgram() {
             const selectedExercises = getSelectedExercises();
-            
+
             if (selectedExercises.length < 4) {
+                showMinimumSelectionToast();
                 return;
             }
             
@@ -6090,6 +6643,52 @@
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
+        function resolveDisplayExercise(ex, week, day, type, index) {
+            const editKey = `${week}-${day}-${type}-${index}`;
+            const edit = state.exerciseEdits[editKey];
+
+            let displayEx = { ...ex };
+            if (edit) {
+                displayEx = { ...ex, ...edit };
+                if (displayEx.method === 'ladder' && edit.ladderRungs) {
+                    const rungs = edit.ladderRungs.split('-').map(n => parseInt(n.trim()));
+                    displayEx.totalReps = rungs.reduce((a, b) => a + b, 0) * displayEx.numLadders;
+                }
+                if (displayEx.method === 'cluster' && edit.clusterBreakdown) {
+                    const breakdown = edit.clusterBreakdown.split('+').map(n => parseInt(n.trim()));
+                    displayEx.totalRepsPerCluster = breakdown.reduce((a, b) => a + b, 0);
+                }
+            }
+
+            return {
+                displayEx,
+                editKey,
+                edit,
+                isPropagated: state.propagatedEdits.has(editKey)
+            };
+        }
+
+        function buildPdfExerciseRow(displayEx, label) {
+            let prescription = '';
+
+            if (displayEx.method === 'ladder') {
+                prescription = `${displayEx.numLadders}×(${displayEx.ladderRungs}) • ${displayEx.rungRest} / ${displayEx.ladderRest}`;
+            } else if (displayEx.method === 'cluster') {
+                prescription = `${displayEx.numClusters}×(${displayEx.clusterBreakdown}) • ${displayEx.intraRest} / ${displayEx.interRest}`;
+            } else {
+                prescription = `${displayEx.sets}×${displayEx.repRange} • ${displayEx.rest}`;
+            }
+
+            const row = document.createElement('div');
+            row.className = 'pdf-exercise-row';
+            row.innerHTML = `
+                <span class="exercise-label">${label}. ${displayEx.name}</span>
+                <span class="exercise-pres">${prescription}${displayEx.tempo ? ' • ' + t('program.tempo') + ' ' + displayEx.tempo : ''}</span>
+            `;
+
+            return row;
+        }
+
         function renderProgram(program, preserveEdits = false) {
             // Store current program for editing
             // Only reset edits if this is a new program (not a re-render after edit)
@@ -6352,19 +6951,6 @@
                 `;
             }
 
-            html += `
-                <div class="action-buttons">
-                    <button class="action-btn primary" onclick="window.print()">
-                        <svg viewBox="0 0 24 24"><path d="M18,3H6V7H18M19,12A1,1 0 0,1 18,11A1,1 0 0,1 19,10A1,1 0 0,1 20,11A1,1 0 0,1 19,12M16,19H8V14H16M19,8H5A3,3 0 0,0 2,11V17H6V21H18V17H22V11A3,3 0 0,0 19,8Z"/></svg>
-                        ${t('program.print')}
-                    </button>
-                    <button class="action-btn" onclick="generateProgram()">
-                        <svg viewBox="0 0 24 24"><path d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z"/></svg>
-                        ${t('program.regenerate')}
-                    </button>
-                </div>
-            `;
-
             programOutput.innerHTML = html;
 
             // Week tab switching
@@ -6383,82 +6969,84 @@
             });
         }
 
+        
         function renderExerciseItem(ex, number, week = null, day = null, index = null, type = 'main') {
-            // Check if this exercise has been edited
-            const editKey = `${week}-${day}-${type}-${index}`;
-            const edit = state.exerciseEdits[editKey];
-            
-            // Apply edits if they exist
-            let displayEx = { ...ex };
-            if (edit) {
-                displayEx = { ...ex, ...edit };
-                // Recalculate totals if needed
-                if (displayEx.method === 'ladder' && edit.ladderRungs) {
-                    const rungs = edit.ladderRungs.split('-').map(n => parseInt(n.trim()));
-                    displayEx.totalReps = rungs.reduce((a, b) => a + b, 0) * displayEx.numLadders;
-                }
-                if (displayEx.method === 'cluster' && edit.clusterBreakdown) {
-                    const breakdown = edit.clusterBreakdown.split('+').map(n => parseInt(n.trim()));
-                    displayEx.totalRepsPerCluster = breakdown.reduce((a, b) => a + b, 0);
-                }
-            }
-            
-            let prescriptionHtml = '';
+            const { displayEx, editKey, edit, isPropagated } = resolveDisplayExercise(ex, week, day, type, index);
+
+            const prescriptionLines = [];
+            let primaryDisplay = '';
+            let tempoChip = '';
             let methodTagHtml = '';
             const deloadClass = displayEx.isDeload ? 'deload-exercise' : '';
             const priorityClass = displayEx.isPrimary ? 'primary-lift' : 'secondary-lift';
             const editedClass = edit ? 'edited' : '';
-            const propagatedClass = state.propagatedEdits.has(editKey) ? 'propagated' : '';
-            
-            // Add user note if present
-            const userNoteHtml = displayEx.userNote ? 
-                `<div class="user-note">📝 ${displayEx.userNote}</div>` : '';
+            const propagatedClass = isPropagated ? 'propagated' : '';
+
+            const patternChip = `<span class="pattern-chip">${displayEx.pattern.toUpperCase()} ${t('program.pattern')}</span>`;
+            const userNoteBubble = displayEx.userNote ? `<div class="user-note-bubble">📝 ${displayEx.userNote}</div>` : '';
 
             if (displayEx.method === 'ladder') {
                 methodTagHtml = `<span class="method-tag ladder">${t('methods.ladder')}</span>`;
-                const loadGuidanceHtml = displayEx.loadGuidance ? 
-                    `<div class="load-guidance">${displayEx.loadGuidance}</div>` : '';
-                prescriptionHtml = `
-                    <div class="sets-reps">${displayEx.numLadders} × (${displayEx.ladderRungs})</div>
-                    <div class="rep-range-note">${t('program.total')}: ~${displayEx.totalReps} ${t('program.reps')}</div>
-                    <div class="rest">${t('program.rungs')}: ${displayEx.rungRest} | ${t('program.ladders')}: ${displayEx.ladderRest}</div>
-                    ${loadGuidanceHtml}
-                    ${userNoteHtml}
-                `;
+                primaryDisplay = `${displayEx.numLadders} × (${displayEx.ladderRungs})`;
+                prescriptionLines.push({ label: t('program.total'), value: `~${displayEx.totalReps} ${t('program.reps')}` });
+                prescriptionLines.push({ label: t('program.rungs'), value: displayEx.rungRest });
+                prescriptionLines.push({ label: t('program.ladders'), value: displayEx.ladderRest });
+                if (displayEx.loadGuidance) {
+                    prescriptionLines.push({ label: 'LOAD', value: displayEx.loadGuidance });
+                }
             } else if (displayEx.method === 'cluster') {
                 methodTagHtml = `<span class="method-tag cluster">${t('methods.cluster')}</span>`;
-                prescriptionHtml = `
-                    <div class="sets-reps">${displayEx.numClusters} × (${displayEx.clusterBreakdown})</div>
-                    <div class="rep-range-note">${displayEx.totalRepsPerCluster} ${t('program.reps')}/cluster</div>
-                    <div class="rest">${t('program.intra')}: ${displayEx.intraRest} | ${t('program.inter')}: ${displayEx.interRest}</div>
-                    ${userNoteHtml}
-                `;
+                primaryDisplay = `${displayEx.numClusters} × (${displayEx.clusterBreakdown})`;
+                prescriptionLines.push({ label: t('program.total'), value: `${displayEx.totalRepsPerCluster} ${t('program.reps')}/${t('methods.cluster')}` });
+                prescriptionLines.push({ label: t('program.intra'), value: displayEx.intraRest });
+                prescriptionLines.push({ label: t('program.inter'), value: displayEx.interRest });
             } else {
                 methodTagHtml = `<span class="method-tag straight">${t('methods.straight')}</span>`;
-                prescriptionHtml = `
-                    <div class="sets-reps">${displayEx.sets} × ${displayEx.repRange}</div>
-                    <div class="rest">${t('program.rest')}: ${displayEx.rest}</div>
-                    ${displayEx.tempo ? `<div class="tempo">${t('program.tempo')}: ${displayEx.tempo}</div>` : ''}
-                    ${userNoteHtml}
-                `;
+                primaryDisplay = `${displayEx.sets} × ${displayEx.repRange}`;
+                prescriptionLines.push({ label: t('program.rest'), value: displayEx.rest });
             }
 
-            // Create edit data attribute for click handler
-            const editData = week !== null ? 
+            if (displayEx.tempo) {
+                tempoChip = `<span class="tempo-chip">${t('program.tempo')}: ${displayEx.tempo}</span>`;
+            }
+
+            const loadChip = displayEx.loadGuidance ? `<span class="tempo-chip">${displayEx.loadGuidance}</span>` : '';
+
+            const editData = week !== null ?
                 `data-week="${week}" data-day="${day}" data-index="${index}" data-type="${type}"` : '';
 
+            const pills = prescriptionLines.map(line => `
+                <div class="prescription-pill">
+                    <span class="label">${line.label}</span>
+                    <span class="value">${line.value}</span>
+                </div>
+            `).join('');
+
             return `
-                <div class="exercise-item ${deloadClass} ${priorityClass} ${editedClass} ${propagatedClass}" 
-                     onclick="openEditModal(${week}, ${day}, ${index}, '${type}')" ${editData}>
-                    <div class="exercise-number">${number}</div>
-                    <div class="exercise-details">
-                        <h4>${displayEx.name}</h4>
-                        <p>${displayEx.pattern.toUpperCase()} ${t('program.pattern')}</p>
-                        ${methodTagHtml}
+                <div class="exercise-item ${deloadClass} ${priorityClass} ${editedClass} ${propagatedClass}" onclick="openEditModal(${week}, ${day}, ${index}, '${type}')" ${editData}>
+                    <div class="exercise-header">
+                        <div class="exercise-number">${number}</div>
+                        <div class="exercise-core">
+                            <div class="exercise-name-row">
+                                <div class="exercise-details">
+                                    <h4>${displayEx.name}</h4>
+                                    <div class="exercise-meta-row">
+                                        ${methodTagHtml}
+                                        ${patternChip}
+                                    </div>
+                                </div>
+                                <div class="headline-prescription">
+                                    <span class="sets-reps">${primaryDisplay}</span>
+                                    ${tempoChip}
+                                    ${loadChip}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="exercise-prescription">
-                        ${prescriptionHtml}
+                    <div class="pill-grid">
+                        ${pills}
                     </div>
+                    ${userNoteBubble}
                 </div>
             `;
         }
